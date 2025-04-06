@@ -94,5 +94,5 @@ This site is designed to help testers and QA professionals practice web automati
 
 ---
 
-## 📁 Project Structure
+
 
