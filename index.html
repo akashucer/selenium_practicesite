@@ -1,0 +1,2507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selenium Automation Practice</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4cc9f0;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+        }
+        
+        body {
+            padding-top: 56px;
+            position: relative;
+            background-color: #f5f7fa;
+        }
+        
+        .section {
+            padding: 3rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .sticky-top {
+            top: 56px;
+        }
+        
+        .hidden-element {
+            display: none;
+        }
+        
+        .delayed-element {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        
+        .hover-reveal {
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+        
+        .hover-reveal:hover {
+            opacity: 1;
+        }
+        
+        .draggable {
+            cursor: move;
+            user-select: none;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .drop-zone {
+            min-height: 100px;
+            border: 2px dashed #dee2e6;
+            border-radius: 4px;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .context-menu {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .context-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .context-menu ul li {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        
+        .context-menu ul li:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .scrollable-div {
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .log-panel {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 300px;
+            height: 200px;
+            background-color: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 10px;
+            overflow-y: auto;
+            z-index: 1000;
+            border-top-left-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .log-panel .log-entry {
+            margin-bottom: 5px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 5px;
+        }
+        
+        .log-panel .log-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .highlight {
+            background-color: rgba(255, 255, 0, 0.3);
+            border: 2px solid yellow;
+        }
+        
+        #progress-container {
+            width: 100%;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        #progress-bar {
+            width: 0%;
+            height: 20px;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+            transition: width 0.3s;
+            text-align: center;
+            color: white;
+        }
+        
+        .toast-container {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 1050;
+        }
+        
+        .spinner-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .tooltip-custom {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip-custom .tooltip-text {
+            visibility: hidden;
+            width: 120px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip-custom:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: rgba(67, 97, 238, 0.05);
+            border-bottom: 1px solid rgba(67, 97, 238, 0.1);
+            font-weight: 600;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+        }
+        
+        .navbar-dark {
+            background-color: var(--secondary-color) !important;
+        }
+        
+        .invalid-feedback {
+            display: none;
+            font-size: 0.875em;
+            color: var(--danger-color);
+        }
+        
+        .was-validated .form-control:invalid ~ .invalid-feedback,
+        .was-validated .form-select:invalid ~ .invalid-feedback,
+        .was-validated .form-check-input:invalid ~ .invalid-feedback {
+            display: block;
+        }
+        
+        .was-validated .form-control:valid,
+        .form-control.is-valid {
+            border-color: var(--success-color);
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%234caf50' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+        
+        .was-validated .form-control:invalid,
+        .form-control.is-invalid {
+            border-color: var(--danger-color);
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23f44336'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23f44336' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+        
+        .login-container {
+            max-width: 450px;
+            margin: 0 auto;
+        }
+        
+        .login-card {
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .login-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .login-body {
+            padding: 30px;
+        }
+        
+        .login-footer {
+            background-color: rgba(67, 97, 238, 0.05);
+            padding: 15px 30px;
+            text-align: center;
+            border-top: 1px solid rgba(67, 97, 238, 0.1);
+        }
+        
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            color: var(--primary-color);
+        }
+        
+        .rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+        
+        .rating > input {
+            display: none;
+        }
+        
+        .rating > label {
+            position: relative;
+            width: 1.1em;
+            font-size: 2em;
+            color: #ddd;
+            cursor: pointer;
+        }
+        
+        .rating > label::before {
+            content: "\2605";
+            position: absolute;
+            opacity: 0;
+        }
+        
+        .rating > label:hover:before,
+        .rating > label:hover ~ label:before {
+            opacity: 1 !important;
+        }
+        
+        .rating > input:checked ~ label:before {
+            opacity: 1;
+        }
+        
+        .rating > input:checked ~ label {
+            color: #ffc107;
+        }
+        
+        .form-switch .form-check-input {
+            width: 3em;
+            height: 1.5em;
+            margin-top: 0.25em;
+        }
+        
+        .form-switch .form-check-input:checked {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+        
+        .step-wizard {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .step-wizard-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        
+        .step-wizard-item:not(:last-child):after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background-color: #e0e0e0;
+            z-index: 0;
+        }
+        
+        .step-wizard-item.active:not(:last-child):after {
+            background-color: var(--primary-color);
+        }
+        
+        .step-wizard-item .step-wizard-circle {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            color: #757575;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 10px;
+        }
+        
+        .step-wizard-item.active .step-wizard-circle {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .step-wizard-item .step-wizard-title {
+            font-size: 0.875rem;
+            color: #757575;
+        }
+        
+        .step-wizard-item.active .step-wizard-title {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .multi-step-form .step {
+            display: none;
+        }
+        
+        .multi-step-form .step.active {
+            display: block;
+        }
+        
+        .search-bar {
+            max-width: 300px;
+        }
+        
+        .search-bar .input-group {
+            border-radius: 50px;
+            overflow: hidden;
+        }
+        
+        .search-bar .form-control {
+            border-right: none;
+            border-top-left-radius: 50px;
+            border-bottom-left-radius: 50px;
+        }
+        
+        .search-bar .btn {
+            border-top-right-radius: 50px;
+            border-bottom-right-radius: 50px;
+            border-left: none;
+            background-color: white;
+            color: var(--primary-color);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .password-strength {
+            height: 5px;
+            margin-top: 5px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .password-strength.weak {
+            width: 25%;
+            background-color: var(--danger-color);
+        }
+        
+        .password-strength.medium {
+            width: 50%;
+            background-color: var(--warning-color);
+        }
+        
+        .password-strength.strong {
+            width: 75%;
+            background-color: var(--success-color);
+        }
+        
+        .password-strength.very-strong {
+            width: 100%;
+            background-color: var(--success-color);
+        }
+    </style>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#navbar-example">
+    <!-- Sticky Navigation -->
+    <nav id="navbar-example" class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" id="brand-logo">
+                <i class="bi bi-bug-fill me-2"></i>Selenium Practice
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#login-section">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#form-section">Forms</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#button-section">Buttons</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#link-section">Links</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#table-section">Tables</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dynamic-section">Dynamic Elements</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#js-section">JS Interactions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#layout-section">Layout Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#iframe-section">iFrames</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#misc-section">Miscellaneous</a>
+                    </li>
+                </ul>
+                <form class="d-flex search-bar">
+                    <div class="input-group">
+                        <input class="form-control" type="search" placeholder="Search..." aria-label="Search" id="nav-search">
+                        <button class="btn" type="button" id="search-btn">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    <h4 class="alert-heading">Welcome to Selenium Automation Practice!</h4>
+                    <p>This page contains various HTML elements and interactions for practicing Selenium automation. Use different selectors like id, name, class, tag, linkText, partialLinkText, cssSelector, and xpath to interact with these elements.</p>
+                    <hr>
+                    <p class="mb-0">Check the log panel at the bottom right to see your interactions.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Section -->
+        <section id="login-section" class="section">
+            <h2 class="mb-4">Login Form</h2>
+            <div class="login-container">
+                <div class="card login-card">
+                    <div class="login-header">
+                        <h4 class="m-0"><i class="bi bi-person-circle me-2"></i>User Login</h4>
+                    </div>
+                    <div class="login-body">
+                        <form id="login-form" action="javascript:void(0);" onsubmit="handleLoginSubmit(event)" novalidate>
+                            <div class="mb-3">
+                                <label for="login-username" class="form-label">Username or Email</label>
+                                <div class="input-group has-validation">
+                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                    <input type="text" class="form-control" id="login-username" name="login-username" placeholder="Enter username or email" required>
+                                    <div class="invalid-feedback">
+                                        Please enter your username or email.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="login-password" class="form-label">Password</label>
+                                <div class="input-group has-validation position-relative">
+                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                    <input type="password" class="form-control" id="login-password" name="login-password" placeholder="Enter password" required minlength="6">
+                                    <span class="password-toggle" onclick="togglePasswordVisibility('login-password')">
+                                        <i class="bi bi-eye"></i>
+                                    </span>
+                                    <div class="invalid-feedback">
+                                        Password must be at least 6 characters.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="remember-me" name="remember-me">
+                                <label class="form-check-label" for="remember-me">Remember me</label>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary" id="login-btn">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="login-footer">
+                        <div class="row">
+                            <div class="col-6 text-start">
+                                <a href="#" id="forgot-password">Forgot Password?</a>
+                            </div>
+                            <div class="col-6 text-end">
+                                <a href="#" id="register-link">Register</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="login-result" class="alert alert-success mt-3 hidden-element" role="alert">
+                    Login successful! Welcome back.
+                </div>
+            </div>
+        </section>
+
+        <!-- Form Section -->
+        <section id="form-section" class="section">
+            <h2 class="mb-4">Form Elements</h2>
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Registration Form</h5>
+                </div>
+                <div class="card-body">
+                    <form id="practice-form" action="javascript:void(0);" onsubmit="handleFormSubmit(event)" novalidate>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="username" class="form-label">Username</label>
+                                <div class="input-group has-validation">
+                                    <span class="input-group-text">@</span>
+                                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required pattern="[a-zA-Z0-9_]{3,20}">
+                                    <div class="invalid-feedback">
+                                        Username must be 3-20 characters and can only contain letters, numbers, and underscores.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <div class="input-group has-validation">
+                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
+                                    <div class="invalid-feedback">
+                                        Please enter a valid email address.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="input-group has-validation position-relative">
+                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required minlength="8" onkeyup="checkPasswordStrength(this.value)">
+                                    <span class="password-toggle" onclick="togglePasswordVisibility('password')">
+                                        <i class="bi bi-eye"></i>
+                                    </span>
+                                    <div class="invalid-feedback">
+                                        Password must be at least 8 characters.
+                                    </div>
+                                </div>
+                                <div class="password-strength" id="password-strength"></div>
+                                <small id="password-strength-text" class="form-text text-muted">Password strength: Not entered</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="confirm-password" class="form-label">Confirm Password</label>
+                                <div class="input-group has-validation">
+                                    <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                    <input type="password" class="form-control" id="confirm-password" name="confirm-password" placeholder="Confirm password" required>
+                                    <div class="invalid-feedback">
+                                        Passwords do not match.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="first-name" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="first-name" name="first-name" placeholder="Enter first name" required>
+                                <div class="invalid-feedback">
+                                    Please enter your first name.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last-name" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="last-name" name="last-name" placeholder="Enter last name" required>
+                                <div class="invalid-feedback">
+                                    Please enter your last name.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="dob" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="dob" name="dob" required>
+                                <div class="invalid-feedback">
+                                    Please select your date of birth.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter phone number" pattern="[0-9]{10}" required>
+                                <div class="invalid-feedback">
+                                    Please enter a valid 10-digit phone number.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Gender</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gender" id="gender-male" value="male" required>
+                                <label class="form-check-label" for="gender-male">Male</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gender" id="gender-female" value="female" required>
+                                <label class="form-check-label" for="gender-female">Female</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gender" id="gender-other" value="other" required>
+                                <label class="form-check-label" for="gender-other">Other</label>
+                                <div class="invalid-feedback">
+                                    Please select your gender.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Interests</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="interests" id="interest-sports" value="sports">
+                                <label class="form-check-label" for="interest-sports">Sports</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="interests" id="interest-reading" value="reading">
+                                <label class="form-check-label" for="interest-reading">Reading</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="interests" id="interest-music" value="music">
+                                <label class="form-check-label" for="interest-music">Music</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="interests" id="interest-travel" value="travel">
+                                  name="interests" id="interest-travel" value="travel">
+                                <label class="form-check-label" for="interest-travel">Travel</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="country" class="form-label">Country</label>
+                            <select class="form-select" id="country" name="country" required>
+                                <option value="">Select a country</option>
+                                <option value="us">United States</option>
+                                <option value="ca">Canada</option>
+                                <option value="uk">United Kingdom</option>
+                                <option value="au">Australia</option>
+                                <option value="in">India</option>
+                                <option value="jp">Japan</option>
+                                <option value="de">Germany</option>
+                                <option value="fr">France</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a country.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address" name="address" rows="3" placeholder="Enter your address" required></textarea>
+                            <div class="invalid-feedback">
+                                Please enter your address.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="profile-pic" class="form-label">Profile Picture</label>
+                            <input class="form-control" type="file" id="profile-pic" name="profile-pic" accept="image/*">
+                            <div class="invalid-feedback">
+                                Please select a valid image file.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="website" class="form-label">Website URL</label>
+                            <input type="url" class="form-control" id="website" name="website" placeholder="https://example.com">
+                            <div class="invalid-feedback">
+                                Please enter a valid URL.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="favorite-color" class="form-label">Favorite Color</label>
+                            <input type="color" class="form-control form-control-color" id="favorite-color" name="favorite-color" value="#4361ee">
+                        </div>
+                        <div class="mb-3">
+                            <label for="auto-suggest" class="form-label">Favorite Programming Language</label>
+                            <input type="text" class="form-control" id="auto-suggest" name="auto-suggest" placeholder="Start typing..." autocomplete="off">
+                            <div id="suggestions" class="list-group mt-1 hidden-element"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="experience-range" class="form-label">Years of Experience: <span id="experience-value">5</span></label>
+                            <input type="range" class="form-range" min="0" max="20" step="1" value="5" id="experience-range" name="experience-range">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rate our website</label>
+                            <div class="rating">
+                                <input type="radio" name="rating" id="rating-5" value="5"><label for="rating-5"></label>
+                                <input type="radio" name="rating" id="rating-4" value="4"><label for="rating-4"></label>
+                                <input type="radio" name="rating" id="rating-3" value="3"><label for="rating-3"></label>
+                                <input type="radio" name="rating" id="rating-2" value="2"><label for="rating-2"></label>
+                                <input type="radio" name="rating" id="rating-1" value="1"><label for="rating-1"></label>
+                            </div>
+                        </div>
+                        <div class="mb-3 form-check form-switch">
+                            <input type="checkbox" class="form-check-input" id="newsletter" name="newsletter" checked>
+                            <label class="form-check-label" for="newsletter">Subscribe to newsletter</label>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
+                            <label class="form-check-label" for="terms">I agree to the terms and conditions</label>
+                            <div class="invalid-feedback">
+                                You must agree to the terms and conditions.
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <button type="submit" class="btn btn-primary" id="submit-btn">
+                                    <i class="bi bi-check-circle me-2"></i>Submit
+                                </button>
+                                <button type="reset" class="btn btn-secondary" id="reset-btn">
+                                    <i class="bi bi-arrow-counterclockwise me-2"></i>Reset
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Multi-step Form -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Multi-step Form</h5>
+                </div>
+                <div class="card-body">
+                    <div class="step-wizard">
+                        <div class="step-wizard-item active" data-step="1">
+                            <div class="step-wizard-circle">1</div>
+                            <div class="step-wizard-title">Personal Info</div>
+                        </div>
+                        <div class="step-wizard-item" data-step="2">
+                            <div class="step-wizard-circle">2</div>
+                            <div class="step-wizard-title">Contact Info</div>
+                        </div>
+                        <div class="step-wizard-item" data-step="3">
+                            <div class="step-wizard-circle">3</div>
+                            <div class="step-wizard-title">Account Setup</div>
+                        </div>
+                        <div class="step-wizard-item" data-step="4">
+                            <div class="step-wizard-circle">4</div>
+                            <div class="step-wizard-title">Confirmation</div>
+                        </div>
+                    </div>
+                    
+                    <form id="multi-step-form" class="multi-step-form" action="javascript:void(0);" onsubmit="handleMultiStepFormSubmit(event)" novalidate>
+                        <!-- Step 1: Personal Info -->
+                        <div class="step active" data-step="1">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="ms-first-name" class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="ms-first-name" name="ms-first-name" required>
+                                    <div class="invalid-feedback">
+                                        Please enter your first name.
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="ms-last-name" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="ms-last-name" name="ms-last-name" required>
+                                    <div class="invalid-feedback">
+                                        Please enter your last name.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ms-dob" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="ms-dob" name="ms-dob" required>
+                                <div class="invalid-feedback">
+                                    Please select your date of birth.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Gender</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="ms-gender" id="ms-gender-male" value="male" required>
+                                    <label class="form-check-label" for="ms-gender-male">Male</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="ms-gender" id="ms-gender-female" value="female" required>
+                                    <label class="form-check-label" for="ms-gender-female">Female</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="ms-gender" id="ms-gender-other" value="other" required>
+                                    <label class="form-check-label" for="ms-gender-other">Other</label>
+                                    <div class="invalid-feedback">
+                                        Please select your gender.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-primary" onclick="nextStep(1)">Next <i class="bi bi-arrow-right"></i></button>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2: Contact Info -->
+                        <div class="step" data-step="2">
+                            <div class="mb-3">
+                                <label for="ms-email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="ms-email" name="ms-email" required>
+                                <div class="invalid-feedback">
+                                    Please enter a valid email address.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ms-phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="ms-phone" name="ms-phone" pattern="[0-9]{10}" required>
+                                <div class="invalid-feedback">
+                                    Please enter a valid 10-digit phone number.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ms-address" class="form-label">Address</label>
+                                <textarea class="form-control" id="ms-address" name="ms-address" rows="3" required></textarea>
+                                <div class="invalid-feedback">
+                                    Please enter your address.
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-secondary" onclick="prevStep(2)"><i class="bi bi-arrow-left"></i> Previous</button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep(2)">Next <i class="bi bi-arrow-right"></i></button>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 3: Account Setup -->
+                        <div class="step" data-step="3">
+                            <div class="mb-3">
+                                <label for="ms-username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="ms-username" name="ms-username" required>
+                                <div class="invalid-feedback">
+                                    Please choose a username.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ms-password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="ms-password" name="ms-password" required minlength="8">
+                                <div class="invalid-feedback">
+                                    Password must be at least 8 characters.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ms-confirm-password" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="ms-confirm-password" name="ms-confirm-password" required>
+                                <div class="invalid-feedback">
+                                    Passwords do not match.
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-secondary" onclick="prevStep(3)"><i class="bi bi-arrow-left"></i> Previous</button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep(3)">Next <i class="bi bi-arrow-right"></i></button>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 4: Confirmation -->
+                        <div class="step" data-step="4">
+                            <div class="alert alert-info" role="alert">
+                                <h5 class="alert-heading">Please review your information</h5>
+                                <p>Check that all the information you provided is correct before submitting the form.</p>
+                            </div>
+                            <div id="ms-summary" class="mb-3">
+                                <!-- Summary will be populated dynamically -->
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="ms-terms" name="ms-terms" required>
+                                <label class="form-check-label" for="ms-terms">I agree to the terms and conditions</label>
+                                <div class="invalid-feedback">
+                                    You must agree to the terms and conditions.
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-secondary" onclick="prevStep(4)"><i class="bi bi-arrow-left"></i> Previous</button>
+                                <button type="submit" class="btn btn-success" id="ms-submit-btn">
+                                    <i class="bi bi-check-circle me-2"></i>Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <div id="ms-result" class="alert alert-success mt-3 hidden-element" role="alert">
+                        Form submitted successfully!
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Button Section -->
+        <section id="button-section" class="section">
+            <h2 class="mb-4">Button Variants</h2>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <button type="button" class="btn btn-primary" id="normal-btn" onclick="logAction('Normal button clicked')">Normal Button</button>
+                            <button type="button" class="btn btn-success" id="js-action-btn" onclick="performJsAction()">JS Action Button</button>
+                            <button type="button" class="btn btn-danger" id="disabled-btn" disabled>Disabled Button</button>
+                            <button type="button" class="btn btn-warning" id="enable-btn" onclick="enableDisabledButton()">Enable Disabled Button</button>
+                            <button type="button" class="btn btn-info" id="double-click-btn" ondblclick="handleDoubleClick()">Double Click Me</button>
+                            <button type="button" class="btn btn-dark" id="right-click-btn" oncontextmenu="handleRightClick(event); return false;">Right Click Me</button>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <button type="button" class="btn btn-outline-primary" id="outline-btn" onclick="logAction('Outline button clicked')">Outline Button</button>
+                            <button type="button" class="btn btn-primary btn-lg" id="large-btn" onclick="logAction('Large button clicked')">Large Button</button>
+                            <button type="button" class="btn btn-primary btn-sm" id="small-btn" onclick="logAction('Small button clicked')">Small Button</button>
+                            <button type="button" class="btn btn-primary" id="loading-btn" onclick="simulateLoading(this)">
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                <span class="btn-text">Click to Load</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div id="button-result" class="alert alert-light" role="alert">
+                                Button actions will be displayed here
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Link Section -->
+        <section id="link-section" class="section">
+            <h2 class="mb-4">Links</h2>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <a href="#" id="normal-link" onclick="logAction('Normal link clicked'); return false;">Normal Link</a> |
+                            <a href="https://www.google.com" id="external-link" target="_blank">External Link (New Tab)</a> |
+                            <a href="#form-section" id="anchor-link">Anchor Link to Form Section</a> |
+                            <a href="javascript:void(0);" id="js-link" onclick="handleJsLink()">JavaScript Link</a> |
+                            <a href="javascript:void(0);" id="popup-link" onclick="openPopup()">Open Popup Window</a> |
+                            <a href="#" id="tooltip-link" data-bs-toggle="tooltip" data-bs-placement="top" title="This is a tooltip">Link with Tooltip</a> |
+                            <a href="#" id="styled-link" class="text-decoration-none text-primary fw-bold">Styled Link</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div id="link-result" class="alert alert-light" role="alert">
+                                Link actions will be displayed here
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Table Section -->
+        <section id="table-section" class="section">
+            <h2 class="mb-4">Tables</h2>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Sortable Table</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="table-search" placeholder="Search table..." onkeyup="filterTable()">
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover" id="sortable-table">
+                            <thead>
+                                <tr>
+                                    <th onclick="sortTable(0)" style="cursor: pointer;">ID <i class="bi bi-arrow-down-up"></i></th>
+                                    <th onclick="sortTable(1)" style="cursor: pointer;">Name <i class="bi bi-arrow-down-up"></i></th>
+                                    <th onclick="sortTable(2)" style="cursor: pointer;">Email <i class="bi bi-arrow-down-up"></i></th>
+                                    <th onclick="sortTable(3)" style="cursor: pointer;">Age <i class="bi bi-arrow-down-up"></i></th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>John Doe</td>
+                                    <td>john@example.com</td>
+                                    <td>28</td>
+                                    <td><button class="btn btn-sm btn-primary" onclick="logAction('Edit button clicked for John Doe')">Edit</button></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Jane Smith</td>
+                                    <td>jane@example.com</td>
+                                    <td>32</td>
+                                    <td><button class="btn btn-sm btn-primary" onclick="logAction('Edit button clicked for Jane Smith')">Edit</button></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Bob Johnson</td>
+                                    <td>bob@example.com</td>
+                                    <td>45</td>
+                                    <td><button class="btn btn-sm btn-primary" onclick="logAction('Edit button clicked for Bob Johnson')">Edit</button></td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Alice Williams</td>
+                                    <td>alice@example.com</td>
+                                    <td>24</td>
+                                    <td><button class="btn btn-sm btn-primary" onclick="logAction('Edit button clicked for Alice Williams')">Edit</button></td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Charlie Brown</td>
+                                    <td>charlie@example.com</td>
+                                    <td>37</td>
+                                    <td><button class="btn btn-sm btn-primary" onclick="logAction('Edit button clicked for Charlie Brown')">Edit</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Dynamic Table</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <button class="btn btn-primary" id="add-row-btn" onclick="addTableRow()">Add New Row</button>
+                        <button class="btn btn-danger" id="remove-row-btn" onclick="removeTableRow()">Remove Last Row</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dynamic-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Laptop</td>
+                                    <td>Electronics</td>
+                                    <td>$999.99</td>
+                                    <td><button class="btn btn-sm btn-danger" onclick="logAction('Delete button clicked for Laptop')">Delete</button></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Smartphone</td>
+                                    <td>Electronics</td>
+                                    <td>$699.99</td>
+                                    <td><button class="btn btn-sm btn-danger" onclick="logAction('Delete button clicked for Smartphone')">Delete</button></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Headphones</td>
+                                    <td>Accessories</td>
+                                    <td>$149.99</td>
+                                    <td><button class="btn btn-sm btn-danger" onclick="logAction('Delete button clicked for Headphones')">Delete</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Paginated Table</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="paginated-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Page 1 -->
+                                <tr class="table-page" data-page="1">
+                                    <td>#12345</td>
+                                    <td>John Doe</td>
+                                    <td><span class="badge bg-success">Completed</span></td>
+                                    <td>2023-01-15</td>
+                                    <td>$120.50</td>
+                                </tr>
+                                <tr class="table-page" data-page="1">
+                                    <td>#12346</td>
+                                    <td>Jane Smith</td>
+                                    <td><span class="badge bg-warning">Pending</span></td>
+                                    <td>2023-01-16</td>
+                                    <td>$85.25</td>
+                                </tr>
+                                <tr class="table-page" data-page="1">
+                                    <td>#12347</td>
+                                    <td>Bob Johnson</td>
+                                    <td><span class="badge bg-success">Completed</span></td>
+                                    <td>2023-01-17</td>
+                                    <td>$220.00</td>
+                                </tr>
+                                <!-- Page 2 -->
+                                <tr class="table-page" data-page="2" style="display: none;">
+                                    <td>#12348</td>
+                                    <td>Alice Williams</td>
+                                    <td><span class="badge bg-danger">Cancelled</span></td>
+                                    <td>2023-01-18</td>
+                                    <td>$45.99</td>
+                                </tr>
+                                <tr class="table-page" data-page="2" style="display: none;">
+                                    <td>#12349</td>
+                                    <td>Charlie Brown</td>
+                                    <td><span class="badge bg-success">Completed</span></td>
+                                    <td>2023-01-19</td>
+                                    <td>$175.50</td>
+                                </tr>
+                                <tr class="table-page" data-page="2" style="display: none;">
+                                    <td>#12350</td>
+                                    <td>Diana Prince</td>
+                                    <td><span class="badge bg-warning">Pending</span></td>
+                                    <td>2023-01-20</td>
+                                    <td>$95.75</td>
+                                </tr>
+                                <!-- Page 3 -->
+                                <tr class="table-page" data-page="3" style="display: none;">
+                                    <td>#12351</td>
+                                    <td>Edward Clark</td>
+                                    <td><span class="badge bg-success">Completed</span></td>
+                                    <td>2023-01-21</td>
+                                    <td>$320.00</td>
+                                </tr>
+                                <tr class="table-page" data-page="3" style="display: none;">
+                                    <td>#12352</td>
+                                    <td>Fiona Green</td>
+                                    <td><span class="badge bg-warning">Pending</span></td>
+                                    <td>2023-01-22</td>
+                                    <td>$65.25</td>
+                                </tr>
+                                <tr class="table-page" data-page="3" style="display: none;">
+                                    <td>#12353</td>
+                                    <td>George Harris</td>
+                                    <td><span class="badge bg-danger">Cancelled</span></td>
+                                    <td>2023-01-23</td>
+                                    <td>$145.99</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <nav aria-label="Table pagination">
+                            <ul class="pagination justify-content-center" id="table-pagination">
+                                <li class="page-item disabled" id="prev-page">
+                                    <a class="page-link" href="javascript:void(0);" onclick="changePage('prev')">Previous</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="changePage(1)">1</a></li>
+                                <li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="changePage(2)">2</a></li>
+                                <li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="changePage(3)">3</a></li>
+                                <li class="page-item" id="next-page">
+                                    <a class="page-link" href="javascript:void(0);" onclick="changePage('next')">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Elements Section -->
+        <section id="dynamic-section" class="section">
+            <h2 class="mb-4">Dynamic Elements</h2>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Delayed Element</h5>
+                            <button class="btn btn-primary" id="show-delayed-btn" onclick="showDelayedElement()">Show Delayed Element</button>
+                            <div id="delayed-element" class="delayed-element mt-3 p-3 border rounded">
+                                This element appears after a delay
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Hidden Element</h5>
+                            <button class="btn btn-primary" id="toggle-hidden-btn" onclick="toggleHiddenElement()">Toggle Hidden Element</button>
+                            <div id="hidden-element" class="hidden-element mt-3 p-3 border rounded">
+                                This element is initially hidden
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Loading Spinner</h5>
+                            <button class="btn btn-primary" id="show-spinner-btn" onclick="showLoadingSpinner()">Show Loading Spinner</button>
+                            <div id="spinner-container" class="spinner-container">
+                                <div class="spinner-border text-light" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Progress Bar</h5>
+                            <button class="btn btn-primary" id="start-progress-btn" onclick="startProgress()">Start Progress</button>
+                            <div id="progress-container">
+                                <div id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- JavaScript Interactions Section -->
+        <section id="js-section" class="section">
+            <h2 class="mb-4">JavaScript Interactions</h2>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <h5>Alerts</h5>
+                            <button class="btn btn-primary mb-2" id="alert-btn" onclick="showAlert()">Show Alert</button>
+                            <button class="btn btn-primary mb-2" id="confirm-btn" onclick="showConfirm()">Show Confirm</button>
+                            <button class="btn btn-primary" id="prompt-btn" onclick="showPrompt()">Show Prompt</button>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Modal</h5>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                Open Modal
+                            </button>
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Example Modal</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>This is a modal dialog for Selenium testing.</p>
+                                            <div class="mb-3">
+                                                <label for="modal-input" class="form-label">Sample Input</label>
+                                                <input type="text" class="form-control" id="modal-input">
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-primary" onclick="logAction('Modal Save button clicked')" data-bs-dismiss="modal">Save changes</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Tooltips</h5>
+                            <div class="tooltip-custom">
+                                <button class="btn btn-primary" id="tooltip-btn">Hover for Tooltip</button>
+                                <span class="tooltip-text">This is a tooltip</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Drag and Drop</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div id="draggable" class="draggable" draggable="true">
+                                        Drag me
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="drop-zone" class="drop-zone">
+                                        Drop here
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Right-Click Context Menu</h5>
+                            <div id="context-menu-area" class="p-3 border rounded" oncontextmenu="showContextMenu(event); return false;">
+                                Right-click in this area
+                            </div>
+                            <div id="context-menu" class="context-menu">
+                                <ul>
+                                    <li onclick="handleContextMenuAction('Edit')">Edit</li>
+                                    <li onclick="handleContextMenuAction('Copy')">Copy</li>
+                                    <li onclick="handleContextMenuAction('Cut')">Cut</li>
+                                    <li onclick="handleContextMenuAction('Paste')">Paste</li>
+                                    <li onclick="handleContextMenuAction('Delete')">Delete</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div id="js-result" class="alert alert-light" role="alert">
+                                JavaScript interaction results will be displayed here
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Layout Features Section -->
+        <section id="layout-section" class="section">
+            <h2 class="mb-4">Layout Features</h2>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Tabs</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active p-3" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <p>This is the home tab content. It's visible by default.</p>
+                            <button class="btn btn-primary" onclick="logAction('Button in Home tab clicked')">Home Tab Button</button>
+                        </div>
+                        <div class="tab-pane fade p-3" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <p>This is the profile tab content. It's hidden by default.</p>
+                            <button class="btn btn-primary" onclick="logAction('Button in Profile tab clicked')">Profile Tab Button</button>
+                        </div>
+                        <div class="tab-pane fade p-3" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                            <p>This is the contact tab content. It's hidden by default.</p>
+                            <button class="btn btn-primary" onclick="logAction('Button in Contact tab clicked')">Contact Tab Button</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Accordion</h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    Accordion Item #1
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <p>This is the first accordion item's body. It's visible by default.</p>
+                                    <button class="btn btn-primary" onclick="logAction('Button in Accordion #1 clicked')">Accordion #1 Button</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    Accordion Item #2
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <p>This is the second accordion item's body. It's hidden by default.</p>
+                                    <button class="btn btn-primary" onclick="logAction('Button in Accordion #2 clicked')">Accordion #2 Button</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    Accordion Item #3
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <p>This is the third accordion item's body. It's hidden by default.</p>
+                                    <button class="btn btn-primary" onclick="logAction('Button in Accordion #3 clicked')">Accordion #3 Button</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Scrollable Div</h5>
+                </div>
+                <div class="card-body">
+                    <div id="scrollable-div" class="scrollable-div">
+                        <p>This is a scrollable div. You can scroll down to see more content.</p>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.</p>
+                        <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.</p>
+                        <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                        <button id="scrollable-btn" class="btn btn-primary" onclick="logAction('Button in scrollable div clicked')">Click Me (Scrollable)</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- iFrame Section -->
+        <section id="iframe-section" class="section">
+            <h2 class="mb-4">iFrames</h2>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <iframe id="test-iframe" src="about:blank" width="100%" height="300" style="border: 1px solid #dee2e6; border-radius: 4px;"></iframe>
+                            <button class="btn btn-primary mt-3" id="load-iframe-btn" onclick="loadIframeContent()">Load iFrame Content</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Miscellaneous Section -->
+        <section id="misc-section" class="section">
+            <h2 class="mb-4">Miscellaneous</h2>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Data Attributes</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <button class="btn btn-primary" id="data-btn" data-testid="test-button" data-custom="custom-value" onclick="showDataAttributes(this)">Show Data Attributes</button>
+                            <div id="data-result" class="alert alert-light mt-3" role="alert">
+                                Data attributes will be displayed here
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">XPath/CSS Selector Tester</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="input-group mb-3">
+                                <select class="form-select" id="selector-type">
+                                    <option value="css">CSS Selector</option>
+                                    <option value="xpath">XPath</option>
+                                </select>
+                                <input type="text" class="form-control" id="selector-input" placeholder="Enter selector...">
+                                <button class="btn btn-primary" id="test-selector-btn" onclick="testSelector()">Test</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="selector-result" class="alert alert-light" role="alert">
+                                Selector test results will be displayed here
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">API Call Simulation</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <button class="btn btn-primary" id="fetch-data-btn" onclick="fetchData()">Fetch Data</button>
+                            <div id="api-result" class="mt-3">
+                                <!-- API results will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container">
+        <div class="toast" id="toast-notification" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Notification</strong>
+                <small>Just now</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toast-message">
+                This is a toast message
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Panel -->
+    <div class="log-panel" id="log-panel">
+        <div class="log-header">
+            <strong>Action Log</strong>
+            <button type="button" class="btn btn-sm btn-light float-end" onclick="clearLog()">Clear</button>
+        </div>
+        <div id="log-entries">
+            <!-- Log entries will be displayed here -->
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global variables
+        let currentPage = 1;
+        const totalPages = 3;
+        let toastInstance = null;
+
+        // Initialize Bootstrap components
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize toasts
+            toastInstance = new bootstrap.Toast(document.getElementById('toast-notification'));
+            
+            // Set up drag and drop
+            setupDragAndDrop();
+            
+            // Set up range input
+            document.getElementById('experience-range').addEventListener('input', function() {
+                document.getElementById('experience-value').textContent = this.value;
+            });
+            
+            // Set up auto-suggest
+            document.getElementById('auto-suggest').addEventListener('input', handleAutoSuggest);
+            
+            // Set up iframe content
+            document.getElementById('test-iframe').onload = function() {
+                logAction('iFrame loaded');
+            };
+            
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Set up form validation
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+            
+            // Log initial page load
+            logAction('Page loaded');
+        });
+
+        // Login form handling
+        function handleLoginSubmit(event) {
+            event.preventDefault();
+            const form = document.getElementById('login-form');
+            
+            // Basic validation
+            let isValid = true;
+            const username = document.getElementById('login-username');
+            const password = document.getElementById('login-password');
+            
+            if (!username.value.trim()) {
+                username.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                username.classList.remove('is-invalid');
+                username.classList.add('is-valid');
+            }
+            
+            if (!password.value.trim() || password.value.length < 6) {
+                password.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                password.classList.remove('is-invalid');
+                password.classList.add('is-valid');
+            }
+            
+            if (isValid) {
+                // Show success message
+                document.getElementById('login-result').classList.remove('hidden-element');
+                
+                // Log the action
+                logAction('Login successful for user: ' + username.value);
+                
+                // Show toast
+                showToast('Login successful!', 'success');
+                
+                // Reset form
+                setTimeout(() => {
+                    form.reset();
+                    username.classList.remove('is-valid');
+                    password.classList.remove('is-valid');
+                }, 2000);
+            }
+            
+            return false;
+        }
+
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const icon = passwordInput.nextElementSibling.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+            
+            logAction('Password visibility toggled');
+        }
+
+        // Check password strength
+        function checkPasswordStrength(password) {
+            const strengthBar = document.getElementById('password-strength');
+            const strengthText = document.getElementById('password-strength-text');
+            
+            if (!password) {
+                strengthBar.className = 'password-strength';
+                strengthBar.style.width = '0';
+                strengthText.textContent = 'Password strength: Not entered';
+                return;
+            }
+            
+            let strength = 0;
+            
+            // Length check
+            if (password.length >= 8) strength += 1;
+            if (password.length >= 12) strength += 1;
+            
+            // Character type checks
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[a-z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            
+            // Update UI based on strength
+            strengthBar.className = 'password-strength';
+            if (strength <= 2) {
+                strengthBar.classList.add('weak');
+                strengthText.textContent = 'Password strength: Weak';
+            } else if (strength <= 4) {
+                strengthBar.classList.add('medium');
+                strengthText.textContent = 'Password strength: Medium';
+            } else if (strength <= 5) {
+                strengthBar.classList.add('strong');
+                strengthText.textContent = 'Password strength: Strong';
+            } else {
+                strengthBar.classList.add('very-strong');
+                strengthText.textContent = 'Password strength: Very Strong';
+            }
+        }
+
+        // Multi-step form navigation
+        function nextStep(currentStepNum) {
+            const currentStep = document.querySelector(`.step[data-step="${currentStepNum}"]`);
+            const nextStep = document.querySelector(`.step[data-step="${currentStepNum + 1}"]`);
+            
+            // Validate current step
+            let isValid = true;
+            const inputs = currentStep.querySelectorAll('input[required], select[required], textarea[required]');
+            
+            inputs.forEach(input => {
+                if (!input.value.trim() || 
+                    (input.type === 'email' && !/\S+@\S+\.\S+/.test(input.value)) ||
+                    (input.type === 'tel' && input.pattern && !new RegExp(input.pattern).test(input.value)) ||
+                    (input.type === 'password' && input.minLength && input.value.length < input.minLength)) {
+                    input.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                showToast('Please fill in all required fields correctly', 'error');
+                return;
+            }
+            
+            // If it's the last step before confirmation, populate summary
+            if (currentStepNum === 3) {
+                populateMultiStepSummary();
+            }
+            
+            // Move to next step
+            currentStep.classList.remove('active');
+            nextStep.classList.add('active');
+            
+            // Update wizard
+            document.querySelector(`.step-wizard-item[data-step="${currentStepNum}"]`).classList.remove('active');
+            document.querySelector(`.step-wizard-item[data-step="${currentStepNum + 1}"]`).classList.add('active');
+            
+            logAction(`Moved to step ${currentStepNum + 1} in multi-step form`);
+        }
+
+        function prevStep(currentStepNum) {
+            const currentStep = document.querySelector(`.step[data-step="${currentStepNum}"]`);
+            const prevStep = document.querySelector(`.step[data-step="${currentStepNum - 1}"]`);
+            
+            currentStep.classList.remove('active');
+            prevStep.classList.add('active');
+            
+            // Update wizard
+            document.querySelector(`.step-wizard-item[data-step="${currentStepNum}"]`).classList.remove('active');
+            document.querySelector(`.step-wizard-item[data-step="${currentStepNum - 1}"]`).classList.add('active');
+            
+            logAction(`Moved back to step ${currentStepNum - 1} in multi-step form`);
+        }
+
+        function populateMultiStepSummary() {
+            const summary = document.getElementById('ms-summary');
+            const form = document.getElementById('multi-step-form');
+            const formData = new FormData(form);
+            
+            let summaryHTML = '<div class="table-responsive"><table class="table table-bordered">';
+            
+            for (let [key, value] of formData.entries()) {
+                if (key === 'ms-terms') continue;
+                
+                let label = key.replace('ms-', '').replace(/-/g, ' ');
+                label = label.charAt(0).toUpperCase() + label.slice(1);
+                
+                summaryHTML += `
+                    <tr>
+                        <th>${label}</th>
+                        <td>${value}</td>
+                    </tr>
+                `;
+            }
+            
+            summaryHTML += '</table></div>';
+            summary.innerHTML = summaryHTML;
+        }
+
+        function handleMultiStepFormSubmit(event) {
+            event.preventDefault();
+            
+            // Check terms checkbox
+            const termsCheckbox = document.getElementById('ms-terms');
+            if (!termsCheckbox.checked) {
+                termsCheckbox.classList.add('is-invalid');
+                return;
+            }
+            
+            // Show success message
+            document.getElementById('ms-result').classList.remove('hidden-element');
+            
+            // Log the action
+            logAction('Multi-step form submitted successfully');
+            
+            // Show toast
+            showToast('Form submitted successfully!', 'success');
+            
+            // Reset form after delay
+            setTimeout(() => {
+                document.getElementById('multi-step-form').reset();
+                document.getElementById('ms-result').classList.add('hidden-element');
+                
+                // Reset to first step
+                document.querySelectorAll('.step').forEach(step => {
+                    step.classList.remove('active');
+                });
+                document.querySelector('.step[data-step="1"]').classList.add('active');
+                
+                // Reset wizard
+                document.querySelectorAll('.step-wizard-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelector('.step-wizard-item[data-step="1"]').classList.add('active');
+                
+            }, 3000);
+        }
+
+        // Form handling
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const form = document.getElementById('practice-form');
+            
+            // Basic validation
+            let isValid = true;
+            const requiredInputs = form.querySelectorAll('[required]');
+            
+            requiredInputs.forEach(input => {
+                if (!input.value.trim() || 
+                    (input.type === 'email' && !/\S+@\S+\.\S+/.test(input.value)) ||
+                    (input.type === 'tel' && input.pattern && !new RegExp(input.pattern).test(input.value)) ||
+                    (input.type === 'password' && input.minLength && input.value.length < input.minLength)) {
+                    input.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    input.classList.remove('is-invalid');
+                    input.classList.add('is-valid');
+                }
+            });
+            
+            // Check if passwords match
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirm-password');
+            
+            if (password.value !== confirmPassword.value) {
+                confirmPassword.classList.add('is-invalid');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                showToast('Please fill in all required fields correctly', 'error');
+                return false;
+            }
+            
+            const formData = new FormData(form);
+            let formValues = {};
+            
+            for (let [key, value] of formData.entries()) {
+                formValues[key] = value;
+            }
+            
+            logAction('Form submitted with values: ' + JSON.stringify(formValues));
+            showToast('Form submitted successfully!', 'success');
+            
+            return false;
+        }
+
+        // Simulate loading button
+        function simulateLoading(button) {
+            const spinner = button.querySelector('.spinner-border');
+            const text = button.querySelector('.btn-text');
+            
+            spinner.classList.remove('d-none');
+            text.textContent = 'Loading...';
+            button.disabled = true;
+            
+            logAction('Loading button clicked');
+            
+            setTimeout(() => {
+                spinner.classList.add('d-none');
+                text.textContent = 'Loaded!';
+                
+                setTimeout(() => {
+                    text.textContent = 'Click to Load';
+                    button.disabled = false;
+                }, 1500);
+                
+            }, 2000);
+        }
+
+        // Button actions
+        function performJsAction() {
+            const result = document.getElementById('button-result');
+            result.textContent = 'JS Action performed at: ' + new Date().toLocaleTimeString();
+            logAction('JS Action button clicked');
+        }
+
+        function enableDisabledButton() {
+            const disabledBtn = document.getElementById('disabled-btn');
+            disabledBtn.disabled = false;
+            disabledBtn.textContent = 'Enabled Button';
+            disabledBtn.classList.remove('btn-danger');
+            disabledBtn.classList.add('btn-success');
+            logAction('Disabled button enabled');
+        }
+
+        function handleDoubleClick() {
+            const result = document.getElementById('button-result');
+            result.textContent = 'Double click detected at: ' + new Date().toLocaleTimeString();
+            logAction('Double click detected');
+        }
+
+        function handleRightClick(event) {
+            const result = document.getElementById('button-result');
+            result.textContent = 'Right click detected at: ' + new Date().toLocaleTimeString();
+            logAction('Right click detected');
+        }
+
+        // Link actions
+        function handleJsLink() {
+            const result = document.getElementById('link-result');
+            result.textContent = 'JavaScript link clicked at: ' + new Date().toLocaleTimeString();
+            logAction('JavaScript link clicked');
+        }
+
+        function openPopup() {
+            window.open('about:blank', 'popup', 'width=400,height=400');
+            logAction('Popup window opened');
+        }
+
+        // Table functions
+        function sortTable(n) {
+            const table = document.getElementById('sortable-table');
+            let rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            switching = true;
+            dir = 'asc';
+            
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName('TD')[n];
+                    y = rows[i + 1].getElementsByTagName('TD')[n];
+                    
+                    if (dir == 'asc') {
+                        if (isNaN(x.innerHTML) ? x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase() : Number(x.innerHTML) > Number(y.innerHTML)) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == 'desc') {
+                        if (isNaN(x.innerHTML) ? x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase() : Number(x.innerHTML) < Number(y.innerHTML)) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount++;
+                } else {
+                    if (switchcount == 0 && dir == 'asc') {
+                        dir = 'desc';
+                        switching = true;
+                    }
+                }
+            }
+            
+            logAction(`Table sorted by column ${n} in ${dir} order`);
+        }
+
+        function filterTable() {
+            const input = document.getElementById('table-search');
+            const filter = input.value.toUpperCase();
+            const table = document.getElementById('sortable-table');
+            const rows = table.getElementsByTagName('tr');
+            
+            for (let i = 1; i < rows.length; i++) {
+                let found = false;
+                const cells = rows[i].getElementsByTagName('td');
+                
+                for (let j = 0; j < cells.length; j++) {
+                    const cell = cells[j];
+                    if (cell) {
+                        const textValue = cell.textContent || cell.innerText;
+                        if (textValue.toUpperCase().indexOf(filter) > -1) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                
+                rows[i].style.display = found ? '' : 'none';
+            }
+            
+            logAction('Table filtered with: ' + filter);
+        }
+
+        function addTableRow() {
+            const table = document.getElementById('dynamic-table').getElementsByTagName('tbody')[0];
+            const rowCount = table.rows.length;
+            const row = table.insertRow();
+            
+            const cell1 = row.insertCell(0);
+            const cell2 = row.insertCell(1);
+            const cell3 = row.insertCell(2);
+            const cell4 = row.insertCell(3);
+            const cell5 = row.insertCell(4);
+            
+            const newId = rowCount + 1;
+            const products = ['Monitor', 'Keyboard', 'Mouse', 'Printer', 'Scanner', 'Webcam', 'Speakers'];
+            const categories = ['Electronics', 'Accessories', 'Peripherals'];
+            const prices = ['$49.99', '$99.99', '$149.99', '$199.99', '$249.99'];
+            
+            const randomProduct = products[Math.floor(Math.random() * products.length)];
+            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+            const randomPrice = prices[Math.floor(Math.random() * prices.length)];
+            
+            cell1.innerHTML = newId;
+            cell2.innerHTML = randomProduct;
+            cell3.innerHTML = randomCategory;
+            cell4.innerHTML = randomPrice;
+            cell5.innerHTML = `<button class="btn btn-sm btn-danger" onclick="logAction('Delete button clicked for ${randomProduct}')">Delete</button>`;
+            
+            logAction('New row added to dynamic table');
+        }
+
+        function removeTableRow() {
+            const table = document.getElementById('dynamic-table').getElementsByTagName('tbody')[0];
+            const rowCount = table.rows.length;
+            
+            if (rowCount > 0) {
+                table.deleteRow(rowCount - 1);
+                logAction('Last row removed from dynamic table');
+            }
+        }
+
+        function changePage(page) {
+            if (page === 'prev') {
+                if (currentPage > 1) {
+                    currentPage--;
+                }
+            } else if (page === 'next') {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                }
+            } else {
+                currentPage = page;
+            }
+            
+            // Update table rows
+            const rows = document.querySelectorAll('.table-page');
+            rows.forEach(row => {
+                if (parseInt(row.dataset.page) === currentPage) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update pagination
+            const pagination = document.getElementById('table-pagination');
+            const pageItems = pagination.querySelectorAll('.page-item');
+            
+            pageItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            pageItems[currentPage].classList.add('active');
+            
+            // Update prev/next buttons
+            document.getElementById('prev-page').classList.toggle('disabled', currentPage === 1);
+            document.getElementById('next-page').classList.toggle('disabled', currentPage === totalPages);
+            
+            logAction(`Changed to page ${currentPage}`);
+        }
+
+        // Dynamic elements
+        function showDelayedElement() {
+            const element = document.getElementById('delayed-element');
+            element.style.opacity = '0';
+            
+            setTimeout(() => {
+                element.style.opacity = '1';
+                logAction('Delayed element shown');
+            }, 2000);
+        }
+
+        function toggleHiddenElement() {
+            const element = document.getElementById('hidden-element');
+            if (element.classList.contains('hidden-element')) {
+                element.classList.remove('hidden-element');
+                logAction('Hidden element shown');
+            } else {
+                element.classList.add('hidden-element');
+                logAction('Hidden element hidden');
+            }
+        }
+
+        function showLoadingSpinner() {
+            const spinner = document.getElementById('spinner-container');
+            spinner.style.display = 'flex';
+            logAction('Loading spinner shown');
+            
+            setTimeout(() => {
+                spinner.style.display = 'none';
+                logAction('Loading spinner hidden');
+                showToast('Loading complete!', 'success');
+            }, 3000);
+        }
+
+        function startProgress() {
+            const progressBar = document.getElementById('progress-bar');
+            let width = 0;
+            progressBar.style.width = '0%';
+            progressBar.textContent = '0%';
+            
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    logAction('Progress completed');
+                    showToast('Progress completed!', 'success');
+                } else {
+                    width += 10;
+                    progressBar.style.width = width + '%';
+                    progressBar.textContent = width + '%';
+                    progressBar.setAttribute('aria-valuenow', width);
+                    logAction(`Progress updated to ${width}%`);
+                }
+            }, 500);
+        }
+
+        // JavaScript interactions
+        function showAlert() {
+            alert('This is an alert dialog');
+            logAction('Alert dialog shown');
+            document.getElementById('js-result').textContent = 'Alert dialog was shown';
+        }
+
+        function showConfirm() {
+            const result = confirm('This is a confirm dialog. Click OK or Cancel');
+            logAction(`Confirm dialog result: ${result}`);
+            document.getElementById('js-result').textContent = `Confirm dialog result: ${result}`;
+        }
+
+        function showPrompt() {
+            const result = prompt('This is a prompt dialog. Enter some text:', 'Default text');
+            logAction(`Prompt dialog result: ${result}`);
+            document.getElementById('js-result').textContent = `Prompt dialog result: ${result !== null ? result : 'Cancelled'}`;
+        }
+
+        function setupDragAndDrop() {
+            const draggable = document.getElementById('draggable');
+            const dropZone = document.getElementById('drop-zone');
+            
+            draggable.addEventListener('dragstart', function(event) {
+                event.dataTransfer.setData('text/plain', 'dragged-item');
+                logAction('Drag started');
+            });
+            
+            dropZone.addEventListener('dragover', function(event) {
+                event.preventDefault();
+            });
+            
+            dropZone.addEventListener('drop', function(event) {
+                event.preventDefault();
+                const data = event.dataTransfer.getData('text/plain');
+                if (data === 'dragged-item') {
+                    dropZone.textContent = 'Item dropped here!';
+                    dropZone.style.backgroundColor = '#d1e7dd';
+                    logAction('Item dropped in drop zone');
+                }
+            });
+        }
+
+        function showContextMenu(event) {
+            event.preventDefault();
+            const contextMenu = document.getElementById('context-menu');
+            contextMenu.style.display = 'block';
+            contextMenu.style.left = event.pageX + 'px';
+            contextMenu.style.top = event.pageY + 'px';
+            
+            document.addEventListener('click', function hideContextMenu() {
+                contextMenu.style.display = 'none';
+                document.removeEventListener('click', hideContextMenu);
+            });
+            
+            logAction('Context menu shown');
+        }
+
+        function handleContextMenuAction(action) {
+            document.getElementById('js-result').textContent = `Context menu action: ${action}`;
+            logAction(`Context menu action: ${action}`);
+        }
+
+        // iFrame functions
+        function loadIframeContent() {
+            const iframe = document.getElementById('test-iframe');
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            
+            iframeDoc.open();
+            iframeDoc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>iFrame Content</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        .btn { 
+                            background-color: #4361ee; 
+                            color: white; 
+                            border: none; 
+                            padding: 8px 16px; 
+                            border-radius: 4px; 
+                            cursor: pointer; 
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h3>iFrame Content</h3>
+                    <p>This is content inside an iFrame.</p>
+                    <form>
+                        <div style="margin-bottom: 10px;">
+                            <label for="iframe-input">Input in iFrame:</label>
+                            <input type="text" id="iframe-input" name="iframe-input">
+                        </div>
+                        <button type="button" class="btn" onclick="parent.iframeButtonClicked()">Click Me</button>
+                    </form>
+                </body>
+                </html>
+            `);
+            iframeDoc.close();
+            
+            logAction('iFrame content loaded');
+        }
+
+        function iframeButtonClicked() {
+            logAction('Button in iFrame clicked');
+            showToast('iFrame button clicked!', 'info');
+        }
+
+        // Miscellaneous functions
+        function showDataAttributes(element) {
+            const result = document.getElementById('data-result');
+            const dataAttributes = {};
+            
+            for (let attr of element.attributes) {
+                if (attr.name.startsWith('data-')) {
+                    dataAttributes[attr.name] = attr.value;
+                }
+            }
+            
+            result.textContent = 'Data Attributes: ' + JSON.stringify(dataAttributes);
+            logAction('Data attributes displayed');
+        }
+
+        function testSelector() {
+            const selectorType = document.getElementById('selector-type').value;
+            const selectorInput = document.getElementById('selector-input').value;
+            const result = document.getElementById('selector-result');
+            
+            try {
+                let elements;
+                if (selectorType === 'css') {
+                    elements = document.querySelectorAll(selectorInput);
+                } else {
+                    elements = document.evaluate(selectorInput, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                }
+                
+                // Remove any existing highlights
+                document.querySelectorAll('.highlight').forEach(el => {
+                    el.classList.remove('highlight');
+                });
+                
+                let count = 0;
+                if (selectorType === 'css') {
+                    count = elements.length;
+                    elements.forEach(el => {
+                        el.classList.add('highlight');
+                    });
+                } else {
+                    count = elements.snapshotLength;
+                    for (let i = 0; i < elements.snapshotLength; i++) {
+                        elements.snapshotItem(i).classList.add('highlight');
+                    }
+                }
+                
+                result.textContent = `Found ${count} element(s) matching the ${selectorType} selector`;
+                logAction(`Tested ${selectorType} selector: ${selectorInput}`);
+            } catch (error) {
+                result.textContent = `Error: ${error.message}`;
+                logAction(`Selector test error: ${error.message}`);
+            }
+        }
+
+        function fetchData() {
+            const apiResult = document.getElementById('api-result');
+            apiResult.innerHTML = `
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p>Fetching data...</p>
+            `;
+            
+            logAction('API fetch started');
+            
+            // Simulate API call with delay
+            setTimeout(() => {
+                const mockData = {
+                    users: [
+                        { id: 1, name: 'John Doe', email: 'john@example.com' },
+                        { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
+                        { id: 3, name: 'Bob Johnson', email: 'bob@example.com' }
+                    ],
+                    timestamp: new Date().toISOString()
+                };
+                
+                apiResult.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h6>API Response</h6>
+                        </div>
+                        <div class="card-body">
+                            <p>Timestamp: ${mockData.timestamp}</p>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${mockData.users.map(user => `
+                                        <tr>
+                                            <td>${user.id}</td>
+                                            <td>${user.name}</td>
+                                            <td>${user.email}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                
+                logAction('API fetch completed');
+                showToast('Data fetched successfully!', 'success');
+            }, 2000);
+        }
+
+        // Auto-suggest functionality
+        function handleAutoSuggest() {
+            const input = document.getElementById('auto-suggest');
+            const suggestions = document.getElementById('suggestions');
+            const value = input.value.toLowerCase();
+            
+            if (value.length < 1) {
+                suggestions.classList.add('hidden-element');
+                return;
+            }
+            
+            const programmingLanguages = [
+                'JavaScript', 'Python', 'Java', 'C#', 'C++', 'PHP', 'Ruby', 'Swift', 
+                'TypeScript', 'Go', 'Kotlin', 'Rust', 'Scala', 'Perl', 'R'
+            ];
+            
+            const filteredLanguages = programmingLanguages.filter(lang => 
+                lang.toLowerCase().includes(value)
+            );
+            
+            if (filteredLanguages.length > 0) {
+                suggestions.innerHTML = '';
+                filteredLanguages.forEach(lang => {
+                    const item = document.createElement('a');
+                    item.classList.add('list-group-item', 'list-group-item-action');
+                    item.textContent = lang;
+                    item.href = 'javascript:void(0);';
+                    item.addEventListener('click', () => {
+                        input.value = lang;
+                        suggestions.classList.add('hidden-element');
+                        logAction(`Selected suggestion: ${lang}`);
+                    });
+                    suggestions.appendChild(item);
+                });
+                suggestions.classList.remove('hidden-element');
+            } else {
+                suggestions.classList.add('hidden-element');
+            }
+            
+            logAction(`Auto-suggest triggered with: ${value}`);
+        }
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const toastElement = document.getElementById('toast-notification');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message;
+            
+            // Set toast color based on type
+            toastElement.className = 'toast';
+            if (type === 'success') {
+                toastElement.classList.add('bg-success', 'text-white');
+            } else if (type === 'error') {
+                toastElement.classList.add('bg-danger', 'text-white');
+            } else if (type === 'warning') {
+                toastElement.classList.add('bg-warning');
+            } else {
+                toastElement.classList.add('bg-info', 'text-white');
+            }
+            
+            toastInstance.show();
+            logAction(`Toast notification shown: ${message}`);
+        }
+
+        // Logging
+        function logAction(action) {
+            const logEntries = document.getElementById('log-entries');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<small>${new Date().toLocaleTimeString()}</small>: ${action}`;
+            logEntries.appendChild(entry);
+            
+            // Auto-scroll to bottom
+            const logPanel = document.getElementById('log-panel');
+            logPanel.scrollTop = logPanel.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log-entries').innerHTML = '';
+            logAction('Log cleared');
+        }
+
+        // Document click handler for closing context menu
+        document.addEventListener('click', function(event) {
+            const contextMenu = document.getElementById('context-menu');
+            if (contextMenu.style.display === 'block') {
+                contextMenu.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
